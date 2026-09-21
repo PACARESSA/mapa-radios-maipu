@@ -24,9 +24,17 @@
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        // Intenta cargar el archivo de datos de radios
-        fetch('radios_maipu.json')
-            .then(response => response.json())
+        // Forzar recalculo del tamaño de pantalla para evitar mapa cortado
+        setTimeout(function() { map.invalidateSize(); }, 500);
+
+        // Cargar los datos desde el archivo Radios_Maipu.json
+        fetch('Radios_Maipu.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
                 var geojsonLayer = L.geoJSON(data, {
                     style: {
@@ -87,7 +95,7 @@
                     }
                 }).addTo(map);
 
-                // Encuentra los radios en el mapa y los enfoca automáticamente
+                // Encuentra y centra la camara en los radios de Maipú
                 map.fitBounds(geojsonLayer.getBounds());
             })
             .catch(err => console.error("Error al cargar los datos:", err));
