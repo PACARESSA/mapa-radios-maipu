@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa Censal de Maipú</title>
-    <!-- Hojas de estilo de Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Librería para los gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         html, body { height: 100%; margin: 0; padding: 0; font-family: Arial, sans-serif; }
@@ -20,19 +18,17 @@
     <div id="map"></div>
 
     <script>
-        // Centrar mapa en Maipú, Buenos Aires
         var map = L.map('map').setView([-36.8621, -57.8801], 13);
 
-        // Capa de OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        // Cargar el GeoJSON
-        fetch('radios_maipu.geojson')
+        // Intenta cargar el archivo de datos de radios
+        fetch('radios_maipu.json')
             .then(response => response.json())
             .then(data => {
-                L.geoJSON(data, {
+                var geojsonLayer = L.geoJSON(data, {
                     style: {
                         color: "#2b8cbe",
                         weight: 2,
@@ -40,12 +36,12 @@
                     },
                     onEachFeature: function (feature, layer) {
                         var props = feature.properties;
-                        var popupId = 'chart-' + (props.radio_id || Math.random().toString(36).substring(7));
+                        var popupId = 'chart-' + Math.random().toString(36).substring(7);
 
                         var popupContent = `
                             <div style="text-align: center;">
-                                <b>Radio Censal: ${props.radio_id || 'S/D'}</b><br>
-                                <small>Población total: ${props.poblacion_total || 0}</small>
+                                <b>Radio Censal: ${props.radio_id || props.LINK || props.COD_RADIO || 'S/D'}</b><br>
+                                <small>Población total: ${props.poblacion_total || props.TOTAL || 0}</small>
                             </div>
                             <div class="popup-chart">
                                 <canvas id="${popupId}"></canvas>
@@ -63,12 +59,20 @@
                                     datasets: [
                                         {
                                             label: 'Varones',
-                                            data: [props.varones_0_14 || 0, props.varones_15_64 || 0, props.varones_65 || 0],
+                                            data: [
+                                                props.varones_0_14 || props.V_0_14 || 0,
+                                                props.varones_15_64 || props.V_15_64 || 0,
+                                                props.varones_65 || props.V_65 || 0
+                                            ],
                                             backgroundColor: '#3498db'
                                         },
                                         {
                                             label: 'Mujeres',
-                                            data: [props.mujeres_0_14 || 0, props.mujeres_15_64 || 0, props.mujeres_65 || 0],
+                                            data: [
+                                                props.mujeres_0_14 || props.M_0_14 || 0,
+                                                props.mujeres_15_64 || props.M_15_64 || 0,
+                                                props.mujeres_65 || props.M_65 || 0
+                                            ],
                                             backgroundColor: '#e74c3c'
                                         }
                                     ]
@@ -82,8 +86,11 @@
                         });
                     }
                 }).addTo(map);
+
+                // Encuentra los radios en el mapa y los enfoca automáticamente
+                map.fitBounds(geojsonLayer.getBounds());
             })
-            .catch(err => console.error("Error al cargar el archivo GeoJSON:", err));
+            .catch(err => console.error("Error al cargar los datos:", err));
     </script>
 </body>
 </html>
