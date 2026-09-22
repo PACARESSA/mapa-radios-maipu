@@ -97,8 +97,9 @@
 }).addTo(map);
     
     // Centrar el mapa automáticamente en la capa
+   setTimeout(() => {
     map.fitBounds(geojsonLayer.getBounds());
-})
+}, 200);
 .catch(err => console.error("Error al cargar los datos:", err));
                    </script>
 </body>
