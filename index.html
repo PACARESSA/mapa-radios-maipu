@@ -18,8 +18,8 @@
     <div id="map"></div>
 
     <script>
-        // Vista inicial fija centrada en Maipú con zoom óptimo
-        var map = L.map('map').setView([-36.8621, -57.8801], 11);
+        // Vista centrada en Maipú con un zoom más abierto (10) por seguridad
+        var map = L.map('map').setView([-36.8621, -57.8801], 10);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap'
@@ -95,6 +95,14 @@
                         });
                     }
                 }).addTo(map);
+
+                // Ajustar automáticamente al área real de los datos con un pequeño retraso
+                setTimeout(() => {
+                    var bounds = geojsonLayer.getBounds();
+                    if (bounds.isValid()) {
+                        map.fitBounds(bounds);
+                    }
+                }, 300);
 
             })
             .catch(err => console.error("Error al cargar los datos:", err));
