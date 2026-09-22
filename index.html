@@ -94,11 +94,12 @@
                         });
                     }
                 }).addTo(map);
-
-                // Encuentra y centra la camara en los radios de Maipú
-                map.fitBounds(geojsonLayer.getBounds());
-            })
-            .catch(err => console.error("Error al cargar los datos:", err));
-    </script>
+}).addTo(map);
+    
+    // Centrar el mapa automáticamente en la capa
+    map.fitBounds(geojsonLayer.getBounds());
+})
+.catch(err => console.error("Error al cargar los datos:", err));
+                   </script>
 </body>
 </html>
