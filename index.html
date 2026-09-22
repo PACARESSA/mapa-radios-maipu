@@ -84,22 +84,23 @@
                                             backgroundColor: '#e74c3c'
                                         }
                                     ]
-                     },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: { y: { beginAtZero: true } }
-    }
-        });
-        }
-    }).addTo(map);
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: { y: { beginAtZero: true } }
+                                }
+                            });
+                        });
+                    }
+                }).addTo(map);
 
-    setTimeout(() => {
-        map.fitBounds(geojsonLayer.getBounds());
-    }, 200);
+                setTimeout(() => {
+                    map.fitBounds(geojsonLayer.getBounds());
+                }, 200);
 
-})
-.catch(err => console.error("Error al cargar los datos:", err));
-</script>
+            })
+            .catch(err => console.error("Error al cargar los datos:", err));
+    </script>
 </body>
 </html>
